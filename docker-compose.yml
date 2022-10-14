@@ -15,7 +15,7 @@ services:
       - traefik.docker.network=traefik
     environment:
       - SSMTP_HOST
-      - SSMTP_PORT=25
+      - SSMTP_PORT
       - SSMTP_FROM_HOSTNAME
       - SSMTP_USE_TLS
       - SSMTP_USE_STARLTLS

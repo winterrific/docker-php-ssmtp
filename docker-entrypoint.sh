@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
 
-/usr/local/bin/gomplate -f /ssmtp.conf.tmpl -o /etc/ssmtp/ssmtp.conf
+exec /usr/local/bin/gomplate -f /ssmtp.conf.tmpl -o /etc/ssmtp/ssmtp.conf
 
-apache2-foreground
+exec apache2-foreground
