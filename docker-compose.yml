@@ -13,6 +13,16 @@ services:
       - traefik.http.routers.apache-php-ssmtp.tls.certresolver=le
       - traefik.http.routers.apache-php-ssmtp.entrypoints=websecure
       - traefik.docker.network=traefik
+    environment:
+      - SSMTP_HOST
+      - SSMTP_PORT=25
+      - SSMTP_FROM_HOSTNAME
+      - SSMTP_USE_TLS
+      - SSMTP_USE_STARLTLS
+      - SSMTP_AUTH_USER
+      - SSMTP_AUTH_PASSWORD
+      - SSMTP_ROOT
+      - SSMTP_DOMAIN
 
 networks:
   traefik:
