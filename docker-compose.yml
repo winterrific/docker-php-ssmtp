@@ -1,18 +1,19 @@
 version: '3'
 services:
   apache:
-    image: harobed/php-ssmtp:7-apache
+    build: .
+    image: winterrific/php-ssmtp:8.1-apache
     volumes:
       - ./www/:/var/www/html/
-    ports:
+    expose:
       - 80
-
-  postfix:
-    image: harobed/versatile-postfix:latest
-    command: exemple.com user:password
-    environment:
-      - DISABLE_DKIM=1
+    labels:
+      - traefik.http.routers.apache-php-ssmtp.rule=Host(`example.com`)
+      - traefik.http.routers.apache-php-ssmtp.tls=true
+      - traefik.http.routers.apache-php-ssmtp.tls.certresolver=le
+      - traefik.http.routers.apache-php-ssmtp.entrypoints=websecure
+      - traefik.docker.network=traefik
 
 networks:
-  default:
-    driver: bridge
+  traefik:
+    external: true

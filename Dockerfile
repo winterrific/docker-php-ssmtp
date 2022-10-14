@@ -1,4 +1,4 @@
-FROM php:7-apache
+FROM php:8.1-apache
 
 RUN a2enmod rewrite
 COPY 000-default.conf /etc/apache2/sites-available/000-default.conf
@@ -20,6 +20,8 @@ ENV SSMTP_USE_TLS=Yes
 ENV SSMTP_USE_STARLTLS=Yes
 ENV SSMTP_AUTH_USER=user
 ENV SSMTP_AUTH_PASSWORD=password
+ENV SSMTP_ROOT=postmaster
+ENV SSMTP_DOMAIN=example.com
 
 COPY ./docker-entrypoint.sh /
 RUN chmod u+x /docker-entrypoint.sh

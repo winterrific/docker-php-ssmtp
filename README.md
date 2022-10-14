@@ -1,40 +1,37 @@
-# Php7 + Apache + SSMTP
+# Php8.1 + Apache + SSMTP
+
+** FORK of [harobed/docker-php-ssmtp](https://github.com/harobed/docker-php-ssmtp) ** with php8.1 and using additional traefik container for ssl etc. Additional slight changes of ssmtp config for setting domain overwrite and root mail address.
 
 This image add [ssmtp](https://wiki.archlinux.org/index.php/SSMTP) service to official
-[Docker Php7 Apache image](https://github.com/docker-library/php/blob/fd8e15250a0c7667b161c34a25f7916b01f72367/7.2/stretch/apache/Dockerfile).
+[Docker Php8 Apache image](https://github.com/docker-library/php/).
 
 With *ssmtp** you can use buildin [mail](http://php.net/manual/en/function.mail.php) Php function
 to send mails via smtp server configured by `SSMTP_*` environment variables.
 
 This image enable also [Apache Rewrite mod](http://httpd.apache.org/docs/current/mod/mod_rewrite.html), *RewriteEngine* can be used in [.htaccess](www/.htaccess).
 
-`docker-compose.yml` example to connect `apache` service to `postfix`:
+`docker-compose.yml` example to use `apache` service togehter with `traefik`:
 
 ```
 version: '3'
 services:
   apache:
-    image: harobed/php-ssmtp:7-apache
-    environment:
-      - SSMTP_HOST=postfix
-      - SSMTP_PORT=25
-      - SSMTP_FROM_HOSTNAME=example.com
-      - SSMTP_USE_TLS=Yes
-      - SSMTP_USE_STARLTLS=Yes
-      - SSMTP_AUTH_USER=user
-      - SSMTP_AUTH_PASSWORD=password
-    ports:
+    build: .
+    image: winterrific/php-ssmtp:8.1-apache
+    volumes:
+      - ./www/:/var/www/html/
+    expose:
       - 80
-
-  postfix:
-    image: harobed/versatile-postfix:latest
-    command: exemple.com user:password
-    environment:
-      - DISABLE_DKIM=1
+    labels:
+      - traefik.http.routers.apache-php-ssmtp.rule=Host(`example.com`)
+      - traefik.http.routers.apache-php-ssmtp.tls=true
+      - traefik.http.routers.apache-php-ssmtp.tls.certresolver=le
+      - traefik.http.routers.apache-php-ssmtp.entrypoints=websecure
+      - traefik.docker.network=traefik
 
 networks:
-  default:
-    driver: bridge
+  traefik:
+    external: true
 ```
 
 See [Dockerfile](Dockerfile) to see environment variable default values.
@@ -45,6 +42,7 @@ See [Dockerfile](Dockerfile) to see environment variable default values.
 ```
 $ git clone https://github.com/harobed/docker-php-ssmtp.git
 $ cd docker-php-ssmtp
+$ docker-compose build
 $ docker-compose up -d
 $ echo "Browse to http://`docker-compose port apache 80`"
 ```
